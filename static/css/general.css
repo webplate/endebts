@@ -1,0 +1,32 @@
+#main {
+    max-width: 600px;
+}
+
+#sub_main {
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+.last_col {
+    text-align: right;
+    width: 5%;
+}
+
+.summary {
+    font-size: larger;
+}
+
+.actor {
+    font-weight: bold;
+}
+
+.receivers {
+    margin: 2px;
+}
+
+/*
+Hack for responsive tables in firefox
+*/
+@-moz-document url-prefix() {
+  fieldset { display: table-cell; }
+}
