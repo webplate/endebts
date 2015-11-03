@@ -128,8 +128,8 @@ def detecte_nul(transacs):
     return False
 
 def detecte_doublon(transacs):
-    for i in range(len(transacs)):
-        for j in range(len(transacs)):
+    for i in xrange(len(transacs)):
+        for j in xrange(len(transacs)):
             if i != j:
                 transac=transacs[i]
                 transac2=transacs[j]
@@ -215,6 +215,11 @@ def retire_cascade(cascade, transacs):
 def simplifie(transacs):
     degroupe(transacs)
     while True:
+        # must be first for speed optimization (most frequent first)
+        d_doubl=detecte_doublon(transacs)
+        if d_doubl != False:
+            retire_doublon(d_doubl, transacs)
+            continue
         d_nul=detecte_nul(transacs)
         #s'il existe une transaction nulle
         if d_nul != False:
@@ -223,10 +228,6 @@ def simplifie(transacs):
         d_neg=detecte_neg(transacs)
         if d_neg != False:
             retire_neg(d_neg, transacs)
-            continue
-        d_doubl=detecte_doublon(transacs)
-        if d_doubl != False:
-            retire_doublon(d_doubl, transacs)
             continue
         d_casc=detecte_cascade(transacs)
         if d_casc != False:
@@ -248,17 +249,23 @@ class dettes:
         self.update()
 
     def update(self):
-        transacs, self.history=genere_graphe(self.historique)
+        #~ transacs, self.history=genere_graphe(self.historique)
         try:
+            #~ t = time.time()
             transacs, self.history=genere_graphe(self.historique)
+            
+            #~ print('genere', time.time() - t)
             self.success=True
         except:
             self.success=False
         if self.success:
-            transacs, self.history=genere_graphe(self.historique)
+            #~ transacs, self.history=genere_graphe(self.historique)
             self.acteurs=liste_acteurs(transacs)
             self.transacs_simple=transacs
+            
+            t = time.time()
             simplifie(self.transacs_simple)
+            #~ print('simplifie', time.time() - t)
 
     def ajoute(self, transac, description, dateandtime=None):
         #le temps par défaut est le temps local
