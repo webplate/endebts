@@ -10,8 +10,14 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 app = Flask(__name__)
 app.secret_key = 'Zak8a9b7wvUkuBAMBLVKaAtBAM73CjuXeFBKw72Ti7jhf'
 
-app_folder = os.path.split(os.path.abspath(__file__))[0]
-filename = os.path.join(app_folder, 'static', 'data', CONFIG.NAME + '.csv')
+if CONFIG.PATH == 0:
+    #use default path
+    app_folder = os.path.split(os.path.abspath(__file__))[0]
+    filename = os.path.join(app_folder, 'static', 'data', CONFIG.NAME + '.csv')
+else:
+    #use config path
+    folder = os.path.split(CONFIG.PATH)[0]
+    filename = os.path.join(folder, CONFIG.NAME + '.csv')
 
 # compute debt graph from file
 mainDebt=endebts.dettes(filename)
