@@ -2,32 +2,32 @@
 
 Built with Flask
 
-    pip install Flask
+    sudo pip install Flask
 
 Copy files to /var/www/endebts/
 
 It's a wsgi app, to run it simply install apache and mod_wsgi.
 
-Then set apache :
+    sudo apt-get install apache2 python-setuptools libapache2-mod-wsgi
+
+Create apache configuration file in /etc/apache2/sites-available/endebts.conf :
 
     LoadModule wsgi_module /usr/lib/apache2/modules/mod_wsgi.so
 
-    <VirtualHost *:80>
-            ServerAdmin webmaster@localhost
+    WSGIDaemonProcess endebts user=www-data group=www-data threads=5
+    WSGIScriptAlias /endebts /var/www/endebts/endebts.wsgi
 
-            ServerName example.org
+    <Directory /var/www/endebts>
+        WSGIProcessGroup endebts
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
 
-            WSGIDaemonProcess endebts user=www-data group=www-data threads=5
-            WSGIScriptAlias /endebts /var/www/endebts/endebts.wsgi
+Activate and restart:
 
-            <Directory /var/www/endebts>
-                WSGIProcessGroup endebts
-                WSGIApplicationGroup %{GLOBAL}
-                Order deny,allow
-                Allow from all
-            </Directory>
-
-    </VirtualHost>
+    sudo a2ensite endebts.conf
+    sudo service apache2 restart
 
 Reload it and visit http://localhost/endebts
 
