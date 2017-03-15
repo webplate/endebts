@@ -10,20 +10,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 app = Flask(__name__)
 app.secret_key = 'Zak8a9b7wvUkuBAMBLVKaAtBAM73CjuXeFBKw72Ti7jhf'
 
-if CONFIG.PATH == 0:
-    #use default path
-    app_folder = os.path.split(os.path.abspath(__file__))[0]
-    filename = os.path.join(app_folder, 'static', 'data', CONFIG.NAME + '.csv')
-else:
-    #use config path
-    folder = os.path.split(CONFIG.PATH)[0]
-    filename = os.path.join(folder, CONFIG.NAME + '.csv')
-
-# compute debt graph from file
-mainDebt=endebts.debts(filename)
-# to add actors later
-added_actors = []
-
 def valid_transaction(giver, receiver, description, amount):
     try:
         a = float(amount)
@@ -95,40 +81,68 @@ def participants(summary):
             actors.append(a2)
     return sorted(actors)
 
+def check_logname(logname):
+    return logname.isalnum()
+
+def get_debt(logname):
+    if logname not in GLOBALDEBTS:
+        if CONFIG.PATH == 0:
+            #use default path
+            app_folder = os.path.split(os.path.abspath(__file__))[0]
+            filename = os.path.join(app_folder, 'static', 'data', logname + '.csv')
+        else:
+            #use config path
+            folder = os.path.split(CONFIG.PATH)[0]
+            filename = os.path.join(folder, logname + '.csv')
+        # compute debt graph from file
+        debt=endebts.debts(filename)
+        # to add actors later
+        added_actors = []
+        
+        GLOBALDEBTS.update({logname: [ debt, added_actors ]})
+        
+    return GLOBALDEBTS[logname]
+
 @app.route('/<string:logname>')
 def main_page(logname):
-    mainDebt.update()
-    if mainDebt.success:
-        summary = round_summary(mainDebt.transacs_simple)
-        summary = sort_summary(summary)
-        equilibrium = get_equilibrium(summary)
-        total_spent = mainDebt.total
-        actors = participants(summary) + added_actors
-        history = format_histo(mainDebt.history)
-        #render page
-        return render_template('main.html',
-            name=CONFIG.NAME,
-            summary=summary,
-            history=history,
-            actors=actors,
-            money=CONFIG.MONEY,
-            dl_button=CONFIG.DL_BUTTON,
-            equilibrium=equilibrium,
-            total=total_spent,
-            precise_version=False)
+    if check_logname(logname):
+        debt, added_actors = get_debt(logname)
+        debt.update()
+        if debt.success:
+            summary = round_summary(debt.transacs_simple)
+            summary = sort_summary(summary)
+            equilibrium = get_equilibrium(summary)
+            total_spent = debt.total
+            actors = participants(summary) + added_actors
+            history = format_histo(debt.history)
+            #render page
+            return render_template('main.html',
+                name=CONFIG.NAME,
+                summary=summary,
+                history=history,
+                actors=actors,
+                money=CONFIG.MONEY,
+                dl_button=CONFIG.DL_BUTTON,
+                equilibrium=equilibrium,
+                total=total_spent,
+                logname=logname,
+                precise_version=False)
+        else:
+            return "Error in history file: " + str(filename)
     else:
-        return "Error in history file: " + str(filename)
+        return "Only alphanumeric characters are allowed."
 
 @app.route('/<string:logname>/full_precision')
 def precise_page(logname):
-    mainDebt.update()
-    if mainDebt.success:
-        summary=mainDebt.transacs_simple
+    debt, added_actors = get_debt(logname)
+    debt.update()
+    if debt.success:
+        summary=debt.transacs_simple
         summary = sort_summary(summary)
         equilibrium = get_equilibrium(summary)
-        total_spent = mainDebt.total
-        actors=mainDebt.acteurs + added_actors
-        history=mainDebt.history
+        total_spent = debt.total
+        actors=debt.acteurs + added_actors
+        history=debt.history
         #render page
         return render_template('main.html',
             name=CONFIG.NAME,
@@ -139,6 +153,7 @@ def precise_page(logname):
             dl_button=CONFIG.DL_BUTTON,
             equilibrium=equilibrium,
             total=total_spent,
+            logname=logname,
             precise_version=True)
     else:
         return "Error in history file: "+ str(filename)
@@ -153,11 +168,11 @@ def add_transaction():
                        request.form['description'],
                        request.form['amount']):
             #write new transaction
-            if mainDebt.success:
+            if debt.success:
                 new_trans=(request.form['giver'],
                             tuple(receivers),
                             request.form['amount'])
-                mainDebt.add(new_trans, request.form['description'])
+                debt.add(new_trans, request.form['description'])
                 #remove actors to add (they should have been written in log now)
                 global added_actors
                 added_actors = []
@@ -174,8 +189,8 @@ def rm_transaction():
     if request.method == 'POST':
         # extract line numbers to remove
         lines = [int(item[7:]) for item in request.form if request.form[item] == u'on']
-        if mainDebt.success:
-            mainDebt.comment(lines)
+        if debt.success:
+            debt.comment(lines)
 
     #redirect to main view
     return redirect(url_for('main_page'))
@@ -185,7 +200,7 @@ def rm_transaction():
 def add_user():
     if request.method == 'POST':
         if (request.form['new_user'] != ''
-        and request.form['new_user'] not in mainDebt.acteurs
+        and request.form['new_user'] not in debt.acteurs
         and request.form['new_user'] not in added_actors):
             added_actors.append(request.form['new_user'])
             #redirect to main view
@@ -195,5 +210,7 @@ def add_user():
     return redirect(url_for('main_page'))
 
 if __name__ == '__main__':
+    GLOBALDEBTS = {}
+
     app.debug = True
     app.run(host='0.0.0.0')
