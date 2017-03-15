@@ -20,7 +20,7 @@ else:
     filename = os.path.join(folder, CONFIG.NAME + '.csv')
 
 # compute debt graph from file
-mainDebt=endebts.dettes(filename)
+mainDebt=endebts.debts(filename)
 # to add actors later
 added_actors = []
 
@@ -95,8 +95,8 @@ def participants(summary):
             actors.append(a2)
     return sorted(actors)
 
-@app.route('/')
-def main_page():
+@app.route('/<string:logname>')
+def main_page(logname):
     mainDebt.update()
     if mainDebt.success:
         summary = round_summary(mainDebt.transacs_simple)
@@ -119,8 +119,8 @@ def main_page():
     else:
         return "Error in history file: " + str(filename)
 
-@app.route('/full_precision')
-def precise_page():
+@app.route('/<string:logname>/full_precision')
+def precise_page(logname):
     mainDebt.update()
     if mainDebt.success:
         summary=mainDebt.transacs_simple
@@ -157,7 +157,7 @@ def add_transaction():
                 new_trans=(request.form['giver'],
                             tuple(receivers),
                             request.form['amount'])
-                mainDebt.ajoute(new_trans, request.form['description'])
+                mainDebt.add(new_trans, request.form['description'])
                 #remove actors to add (they should have been written in log now)
                 global added_actors
                 added_actors = []

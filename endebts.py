@@ -69,17 +69,16 @@ class UnicodeWriter:
             self.writerow(row)
 
 ###Gestion du fichier d'historique
-def genere_graphe(histo):
+def generate_graph(histo):
     #ouvre fichier en lecture
     try:
-        historique=open(histo,'rb')
+        history=open(histo,'rb')
     except IOError :
         # create it if inexistant
-        historique=open(histo,'ab')
-        historique.close()
-        historique=open(histo,'rb')
-    #~ reader=csv.reader(historique, delimiter='	', quotechar='"')
-    reader=UnicodeReader(historique, delimiter='	', quotechar='"')
+        history=open(histo,'ab')
+        history.close()
+        history=open(histo,'rb')
+    reader=UnicodeReader(history, delimiter='	', quotechar='"')
     transacs=[]
     transacs_full=[]
     for i, row in enumerate(reader):
@@ -88,36 +87,36 @@ def genere_graphe(histo):
             row[3]=tuple(re.split(',',row[3]))
             transacs.append((row[1],row[3],float(row[2])))
             transacs_full.append([i] + row)
-    historique.close()
+    history.close()
     return transacs, transacs_full
     
 def read_all(histo):
     #ouvre fichier en lecture
     try:
-        historique=open(histo,'rb')
+        history=open(histo,'rb')
     except IOError :
         return False
-    reader=csv.reader(historique, delimiter='	', quotechar='"')
+    reader=csv.reader(history, delimiter='	', quotechar='"')
     lines=[]
     for row in reader:
             lines.append(row)
-    historique.close()
+    history.close()
     return lines
 
-def liste_acteurs(transacs):
-    acteurs=[]
+def liste_actors(transacs):
+    actors=[]
     for transac in transacs:
-        if transac[0] not in acteurs:
-            acteurs.append(transac[0])
+        if transac[0] not in actors:
+            actors.append(transac[0])
         if type(transac[1]) != tuple:
-            if transac[1] not in acteurs:
-                acteurs.append(transac[1])
+            if transac[1] not in actors:
+                actors.append(transac[1])
         else:
             for a in transac[1]:
-                if a not in acteurs:
-                    acteurs.append(a)
-    acteurs.sort()
-    return acteurs
+                if a not in actors:
+                    actors.append(a)
+    actors.sort()
+    return actors
     
 def compute_total_spent(transacs):
     total = 0
@@ -125,15 +124,14 @@ def compute_total_spent(transacs):
         total += t[2]
     return round(total, 2)
 
-###Simplification du graphe des endettements
-def detecte_nul(transacs):
+###Simplification du graph des endebtments
+def detect_null(transacs):
     for transac in transacs[:]:
-        #~ print transac
         if transac[2] == 0:
             return transac
     return False
 
-def detecte_doublon(transacs):
+def detect_doubl(transacs):
     for i in xrange(len(transacs)):
         for j in xrange(len(transacs)):
             if i != j:
@@ -142,12 +140,12 @@ def detecte_doublon(transacs):
                 #si deux transacs partagent destinataire et emetteur
                 if (transac[0],transac[1]) == (transac2[0],transac2[1]):
                     return (transac,transac2,0)
-                #si dette opposée
+                #si debt opposée
                 elif (transac[0],transac[1]) == (transac2[1],transac2[0]):
                     return (transac,transac2,1)
     return False
 
-def retire_doublon(doublon, transacs):
+def remove_doubl(doublon, transacs):
     (transac,transac2,operator)=doublon
     if operator == 0:
         transacs.append((transac[0],transac[1],transac[2]+transac2[2]))
@@ -156,7 +154,7 @@ def retire_doublon(doublon, transacs):
     transacs.remove(transac)
     transacs.remove(transac2)
 
-def degroupe(transacs):
+def degroup(transacs):
     for transac in transacs[:]:
         #si transac destinée à un groupe
         if type(transac[1]) == tuple:
@@ -166,7 +164,7 @@ def degroupe(transacs):
                     transacs.append((transac[0],i,transac[2]/len(transac[1])))
             transacs.remove(transac)
 
-def detecte_cycle(transacs):
+def detect_cycle(transacs):
     for transacA in transacs:
         for transacB in transacs:
             for transacC in transacs:
@@ -176,7 +174,7 @@ def detecte_cycle(transacs):
                         return (transacA,transacB,transacC)
     return False
 
-def retire_cycle(cycle, transacs):
+def remove_cycle(cycle, transacs):
     (transacA,transacB,transacC)=cycle
     if transacB[2] < transacC[2]:
         transacs.append((transacA[0],transacA[1],transacA[2]-transacB[2]))
@@ -188,7 +186,7 @@ def retire_cycle(cycle, transacs):
     transacs.remove(transacB)
     transacs.remove(transacC)
 
-def detecte_cascade(transacs):
+def detect_cascad(transacs):
     for transac in transacs:
         for transac2 in transacs:
             if transac != transac2:
@@ -196,19 +194,18 @@ def detecte_cascade(transacs):
                     return (transac,transac2)
     return False
 
-def detecte_neg(transacs):
+def detect_neg(transacs):
     for transac in transacs[:]:
         if transac[2] < 0:
             return transac
     return False
 
-def retire_neg(transac, transacs):
+def remove_neg(transac, transacs):
     transacs.append((transac[1],transac[0],-transac[2]))
     transacs.remove(transac)
 
-def retire_cascade(cascade, transacs):
+def remove_cascad(cascade, transacs):
     (transacD,transacE)=cascade
-    #~ print (transacD,transacE)
     if transacD[2] > transacE[2]:
         transacs.append((transacD[0],transacE[1],transacE[2]))
         transacs.append((transacD[0],transacD[1],transacD[2]-transacE[2]))
@@ -218,64 +215,59 @@ def retire_cascade(cascade, transacs):
     transacs.remove(transacD)
     transacs.remove(transacE)
 
-def simplifie(transacs):
-    degroupe(transacs)
+def simplify(transacs):
+    degroup(transacs)
     while True:
         # must be first for speed optimization (most frequent first)
-        d_doubl=detecte_doublon(transacs)
+        d_doubl=detect_doubl(transacs)
         if d_doubl != False:
-            retire_doublon(d_doubl, transacs)
+            remove_doubl(d_doubl, transacs)
             continue
-        d_nul=detecte_nul(transacs)
+        d_nul=detect_null(transacs)
         #s'il existe une transaction nulle
         if d_nul != False:
             transacs.remove(d_nul)
             continue
-        d_neg=detecte_neg(transacs)
+        d_neg=detect_neg(transacs)
         if d_neg != False:
-            retire_neg(d_neg, transacs)
+            remove_neg(d_neg, transacs)
             continue
-        d_casc=detecte_cascade(transacs)
+        d_casc=detect_cascad(transacs)
         if d_casc != False:
-            retire_cascade(d_casc, transacs)
+            remove_cascad(d_casc, transacs)
             continue
-        d_cycle=detecte_cycle(transacs)
+        d_cycle=detect_cycle(transacs)
         if d_cycle != False:
-            retire_cycle(d_cycle, transacs)
+            remove_cycle(d_cycle, transacs)
             continue
 #la simplification est terminée:
-#il ne reste plus de dettes nulles, négatives, redondantes,
+#il ne reste plus de debts nulles, négatives, redondantes,
 #cycliques ou en cascade
         break
 
-###tentative de création de l'objet "dettes"
-class dettes:
+###tentative de création de l'objet "debts"
+class debts:
     def __init__(self, histo):
-        self.historique=histo
+        self.historyname=histo
         self.update()
         self.total = 0
 
     def update(self):
-        #~ transacs, self.history=genere_graphe(self.historique)
         try:
-            #~ t = time.time()
-            transacs, self.history=genere_graphe(self.historique)
+            transacs, self.history=generate_graph(self.historyname)
             
-            #~ print('genere', time.time() - t)
             self.success=True
         except:
             self.success=False
         if self.success:
-            #~ transacs, self.history=genere_graphe(self.historique)
-            self.acteurs = liste_acteurs(transacs)
+            self.actors = liste_actors(transacs)
             self.total = compute_total_spent(transacs)
             self.transacs_simple = transacs
             
             t = time.time()
-            simplifie(self.transacs_simple)
-            #~ print('simplifie', time.time() - t)
+            simplify(self.transacs_simple)
 
-    def ajoute(self, transac, description, dateandtime=None):
+    def add(self, transac, description, dateandtime=None):
         #le temps par défaut est le temps local
         if dateandtime == None:
             dateandtime=time.localtime()
@@ -293,16 +285,14 @@ class dettes:
         if transac[0] != destinataires and transac[2] != 0.0:
             transac=(time.strftime('%d/%m/%y %H:%M',dateandtime),
             transac[0], transac[2], destinataires, description)
-            historique=open(self.historique,'ab')
-            #~ writer=csv.writer(historique, delimiter='	', quotechar='"')
+            historique=open(self.historyname,'ab')
             writer=UnicodeWriter(historique, delimiter='	', quotechar='"')
             writer.writerow(transac)
             historique.close()
-            #~ print "Transaction enregistrée."
             self.update()
     
     def comment(self, line_nbs):
-        full_histo = read_all(self.historique)
+        full_histo = read_all(self.historyname)
         new_histo = []
         for i in range(len(full_histo)):
             #comment line if notified
@@ -312,7 +302,7 @@ class dettes:
                 #copy
                 new_histo.append(full_histo[i])        
         #write commented version
-        historique=open(self.historique,'wb')
+        historique=open(self.historyname,'wb')
         writer=csv.writer(historique, delimiter='	', quotechar='"')
         writer.writerows(new_histo)
         historique.close()
