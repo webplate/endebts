@@ -98,6 +98,7 @@ def main_page():
         summary = round_summary(mainDebt.transacs_simple)
         summary = sort_summary(summary)
         equilibrium = get_equilibrium(summary)
+        total_spent = mainDebt.total
         actors = participants(summary) + added_actors
         history = format_histo(mainDebt.history)
         #render page
@@ -109,6 +110,7 @@ def main_page():
             money=CONFIG.MONEY,
             dl_button=CONFIG.DL_BUTTON,
             equilibrium=equilibrium,
+            total=total_spent,
             precise_version=False)
     else:
         return "Error in history file: " + str(filename)
@@ -120,6 +122,7 @@ def precise_page():
         summary=mainDebt.transacs_simple
         summary = sort_summary(summary)
         equilibrium = get_equilibrium(summary)
+        total_spent = mainDebt.total
         actors=mainDebt.acteurs + added_actors
         history=mainDebt.history
         #render page
@@ -131,6 +134,7 @@ def precise_page():
             money=CONFIG.MONEY,
             dl_button=CONFIG.DL_BUTTON,
             equilibrium=equilibrium,
+            total=total_spent,
             precise_version=True)
     else:
         return "Error in history file: "+ str(filename)

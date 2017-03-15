@@ -25,6 +25,9 @@
     <div class="container" id="main">
     <div id="sub_main">
     
+<!--
+    Alert row
+-->
     <div class="row">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
@@ -36,6 +39,10 @@
           {% endif %}
         {% endwith %}
     </div>
+
+<!--
+    Add row
+-->
     
     <div class="row">
         <div class="col-xs-12">
@@ -86,6 +93,9 @@
         </div>
     </div>
 
+<!--
+    Equilibrium row
+-->
     
     <div class="row">
         
@@ -109,6 +119,28 @@
                 {% endfor %}
             </table>
             
+        </div>
+    
+        <div class="col-sm-4 text-right">
+            <h2><small>Add person</small></h2>
+            <form method="post" action="add_user">
+                <p>
+                    <label class="sr-only" for="new_user">New user :</label>
+                    <input class="form-control" type="text" name="new_user" id="new_user" placeholder="New user" maxlength="20" required/>
+                </p>
+
+            <input class="btn btn-primary" type="submit" value="Send name" />
+            
+            </form>
+        </div>
+    </div>
+    
+<!--
+    Summary row
+-->
+        
+    <div class="row">
+        <div class="col-sm-6">
             <h2>Summary</h2>
             <p class="summary">
             {% for item in summary %}
@@ -120,28 +152,25 @@
             {% else %}
                 <a class="btn btn-default btn-xs" href="./full_precision">Show unsignificant transactions</a>
             {% endif %}
-                    
+        </div>
+                
+        <div class="col-sm-6 text-right">
+            <h2><small>Total amount spent</small></h2>
+            <p><strong>{{ total }} {{ money }}</strong></p>
         </div>
     
-        <div class="col-sm-4">
-        <h2><small>Add person</small></h2>
-        <form method="post" action="add_user">
-            <p>
-                <label class="sr-only" for="new_user">New user :</label>
-                <input class="form-control" type="text" name="new_user" id="new_user" placeholder="New user" maxlength="20" required/>
-            </p>
-
-        <input class="btn btn-primary" type="submit" value="Send name" />
-        
-        </form>
-        </div>
     </div>
+    
 <!--
-    Close main (UP) container and sub container
+    End first container
 -->
     </div>
     </div>
+
     
+<!--
+    Log
+-->
     
     <div class="container" id="log_container">
     

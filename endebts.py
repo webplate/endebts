@@ -118,6 +118,12 @@ def liste_acteurs(transacs):
                     acteurs.append(a)
     acteurs.sort()
     return acteurs
+    
+def compute_total_spent(transacs):
+    total = 0
+    for t in transacs:
+        total += t[2]
+    return round(total, 2)
 
 ###Simplification du graphe des endettements
 def detecte_nul(transacs):
@@ -247,6 +253,7 @@ class dettes:
     def __init__(self, histo):
         self.historique=histo
         self.update()
+        self.total = 0
 
     def update(self):
         #~ transacs, self.history=genere_graphe(self.historique)
@@ -260,8 +267,9 @@ class dettes:
             self.success=False
         if self.success:
             #~ transacs, self.history=genere_graphe(self.historique)
-            self.acteurs=liste_acteurs(transacs)
-            self.transacs_simple=transacs
+            self.acteurs = liste_acteurs(transacs)
+            self.total = compute_total_spent(transacs)
+            self.transacs_simple = transacs
             
             t = time.time()
             simplifie(self.transacs_simple)
