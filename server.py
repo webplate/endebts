@@ -62,6 +62,26 @@ def sort_summary(summary):
     sorted_summary = sorted(summary, key=lambda debt: debt[1])
     return sorted_summary
     
+def get_equilibrium(summary):
+    total = {}
+    for t in summary:
+        if t[0] not in total:
+            total.update({t[0]: 0})
+        if t[1] not in total:
+            total.update({t[1]: 0})
+        total[t[0]] = round(total[t[0]] + t[2], 2)
+        total[t[1]] = round(total[t[1]] - t[2], 2)
+    ordered = sorted(total.items(), key=lambda x: x[1])
+    
+    amplitude = max(ordered[-1][1], - ordered[0][1])
+    coeffs = []
+    for e in ordered:
+        percent = round(100*e[1]/amplitude)
+        if percent < 0:
+            percent *= -1
+        coeffs.append((e[0], e[1], percent))
+    return coeffs
+    
 def participants(summary):
     actors = []
     for a1, a2, amount in summary:
@@ -77,6 +97,7 @@ def main_page():
     if mainDebt.success:
         summary = round_summary(mainDebt.transacs_simple)
         summary = sort_summary(summary)
+        equilibrium = get_equilibrium(summary)
         actors = participants(summary) + added_actors
         history = format_histo(mainDebt.history)
         #render page
@@ -86,6 +107,8 @@ def main_page():
             history=history,
             actors=actors,
             money=CONFIG.MONEY,
+            dl_button=CONFIG.DL_BUTTON,
+            equilibrium=equilibrium,
             precise_version=False)
     else:
         return "Error in history file: " + str(filename)
@@ -96,8 +119,8 @@ def precise_page():
     if mainDebt.success:
         summary=mainDebt.transacs_simple
         summary = sort_summary(summary)
+        equilibrium = get_equilibrium(summary)
         actors=mainDebt.acteurs + added_actors
-        
         history=mainDebt.history
         #render page
         return render_template('main.html',
@@ -106,6 +129,8 @@ def precise_page():
             history=format_histo(history),
             actors=actors,
             money=CONFIG.MONEY,
+            dl_button=CONFIG.DL_BUTTON,
+            equilibrium=equilibrium,
             precise_version=True)
     else:
         return "Error in history file: "+ str(filename)

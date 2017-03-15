@@ -24,6 +24,26 @@
     margin: 2px;
 }
 
+.rowform {
+/*
+alignments
+*/
+    max-width: 540px;
+    margin-left: 0px;  
+}
+
+.progress-bar {
+    min-width: 2em;
+}
+
+.progress {
+    margin-bottom: 0px;
+}
+
+.name_col {
+    width: 40%;
+}
+
 /*
 Hack for responsive tables in firefox
 */

@@ -5,3 +5,4 @@
 PATH = 0
 NAME = 'transactions'
 MONEY = u'€'
+DL_BUTTON = True # do we display csv DL button ? 

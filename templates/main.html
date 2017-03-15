@@ -35,81 +35,107 @@
             </ul>
           {% endif %}
         {% endwith %}
-        
+    </div>
+    
+    <div class="row">
+        <div class="col-xs-12">
         <h2>Add transaction</h2>
-    </div>
-    
-    <form method="post" action="add">
-    <div class="row">
-            <div class="col-xs-4">
-                    <div class="row">
-                    <label for="giver">Giver :</label>
-                    <select class="form-control actor" name="giver" id="giver" autofocus>
-                    {% for item in actors %}
-                        <option class="actor" value="{{ item }}">{{ item }}</option>
-                    {% endfor %}
-                    </select>
-                    
-                    <br />
-                    
-                    <div class="form-group">
-                        <label class="sr-only" for="amount">Amount in {{ money }}:</label>
-                        <div class="input-group">
-                            <div class="input-group-addon">{{ money }}</div>
-                            <input class="form-control" type="text" name="amount" id="amount" placeholder="Amount" maxlength="20" required/>
+        
+        <form method="post" action="add">
+        <div class="row rowform">
+                <div class="col-xs-4">
+                        <div class="row">
+                        <label for="giver">Giver :</label>
+                        <select class="form-control actor" name="giver" id="giver" autofocus>
+                        {% for item in actors %}
+                            <option class="actor" value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
+                        </select>
+                        
+                        <br />
+                        
+                        <div class="form-group">
+                            <label class="sr-only" for="amount">Amount in {{ money }}:</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">{{ money }}</div>
+                                <input class="form-control" type="text" name="amount" id="amount" placeholder="Amount" maxlength="20" required/>
+                            </div>
                         </div>
-                    </div>
-                    </div>
+                        </div>
+                </div>
+                <div class="col-xs-8">
+                
+                    <label>Receivers :</label><br />
+                    {% for item in actors %}
+                        <label class="btn btn-default receivers" for="{{ item }}">
+                            <input type="checkbox" name="{{ item }}" id="{{ item }}"  checked="true"/> <span class="actor">{{ item }}</span>
+                        </label>
+                    {% endfor %}
+                
+                </div>
             </div>
-            <div class="col-xs-8">
-            
-                <label>Receivers :</label><br />
-                {% for item in actors %}
-                    <label class="btn btn-default receivers" for="{{ item }}">
-                        <input type="checkbox" name="{{ item }}" id="{{ item }}"  checked="true"/> <span class="actor">{{ item }}</span>
-                    </label>
-                {% endfor %}
-            
-            </div>
+        <div class="row rowform">
+            <p>
+            <label class="sr-only" for="description">Description :</label><br />
+            <input class="form-control" type="text" name="description" id="description" placeholder="Description" maxlength="1000" required/>
+            </p>
+            <input class="btn btn-primary" type="submit" value="Send transaction" />
         </div>
-    <div class="row">
-        <p>
-        <label class="sr-only" for="description">Description :</label><br />
-        <input class="form-control" type="text" name="description" id="description" placeholder="Description" maxlength="1000" required/>
-        </p>
-        <input class="btn btn-primary" type="submit" value="Send transaction" />
+        </form>
+        
+        </div>
     </div>
-    </form>
 
     
     <div class="row">
-    <h2>Summary</h2>
-    <p class="summary">
-    {% for item in summary %}
-            <strong>{{ item[1] }}</strong> owes <strong>{{ item[2] }} {{ money }}</strong> to <strong>{{ item[0] }}</strong>.<br />
-    {% endfor %}
-    </p>
-    {% if precise_version %}
-        <a class="btn btn-default btn-xs" href=".">Show only significant transactions</a>        
-    {% else %}
-        <a class="btn btn-default btn-xs" href="./full_precision">Show unsignificant transactions</a>
-    {% endif %}
+        
+        <div class="col-sm-8">
+            <h2>Equilibrium</h2>
             
-    </div>
+            <table class="table">
+                {% for item in equilibrium %}
+                <tr>
+                    <td class="name_col"><strong>{{ item[0] }}</strong></td>
+                    <td><div class="progress">
+                        {% if item[1] < 0 %}
+                            <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{ item[2] }}%;">
+                        {% else %}
+                            <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{ item[2] }}%;">
+                        {% endif %}
+                        {{ item[1] }} {{ money }}
+                      </div>
+                    </div></td>
+                </tr>
+                {% endfor %}
+            </table>
+            
+            <h2>Summary</h2>
+            <p class="summary">
+            {% for item in summary %}
+                    <strong>{{ item[1] }}</strong> owes <strong>{{ item[2] }} {{ money }}</strong> to <strong>{{ item[0] }}</strong>.<br />
+            {% endfor %}
+            </p>
+            {% if precise_version %}
+                <a class="btn btn-default btn-xs" href=".">Show only significant transactions</a>        
+            {% else %}
+                <a class="btn btn-default btn-xs" href="./full_precision">Show unsignificant transactions</a>
+            {% endif %}
+                    
+        </div>
     
-    <div class="row">
-    <h2>Add person</h2>
-    <form method="post" action="add_user">
-        <p>
-            <label class="sr-only" for="new_user">New user :</label>
-            <input class="form-control" type="text" name="new_user" id="new_user" placeholder="New user" maxlength="20" required/>
-        </p>
+        <div class="col-sm-4">
+        <h2><small>Add person</small></h2>
+        <form method="post" action="add_user">
+            <p>
+                <label class="sr-only" for="new_user">New user :</label>
+                <input class="form-control" type="text" name="new_user" id="new_user" placeholder="New user" maxlength="20" required/>
+            </p>
 
-    <input class="btn btn-primary" type="submit" value="Send name" />
-    
-    </form>
+        <input class="btn btn-primary" type="submit" value="Send name" />
+        
+        </form>
+        </div>
     </div>
-    
 <!--
     Close main (UP) container and sub container
 -->
@@ -119,7 +145,12 @@
     
     <div class="container" id="log_container">
     
-    <h2>Log</h2>
+    {% if dl_button %}
+        <h2>Log <a class="btn btn-default btn-sm" href="/static/data/{{ name }}.csv">Download</a></h2>
+    {% else %}
+        <h2>Log</h2>
+    {% endif %}
+    
     <form method="post" action="rm_transaction" onsubmit="return confirm('Do you really want to remove the selected transactions ?');">
     <div class="table-responsive">
     <table class="table table-condensed table-striped" id="history">
