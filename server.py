@@ -63,24 +63,28 @@ def sort_summary(summary):
     return sorted_summary
     
 def get_equilibrium(summary):
-    total = {}
-    for t in summary:
-        if t[0] not in total:
-            total.update({t[0]: 0})
-        if t[1] not in total:
-            total.update({t[1]: 0})
-        total[t[0]] = round(total[t[0]] + t[2], 2)
-        total[t[1]] = round(total[t[1]] - t[2], 2)
-    ordered = sorted(total.items(), key=lambda x: x[1])
-    
-    amplitude = max(ordered[-1][1], - ordered[0][1])
-    coeffs = []
-    for e in ordered:
-        percent = round(100*e[1]/amplitude)
-        if percent < 0:
-            percent *= -1
-        coeffs.append((e[0], e[1], percent))
-    return coeffs
+    if len(summary) > 0:
+        total = {}
+        for t in summary:
+            if t[0] not in total:
+                total.update({t[0]: 0})
+            if t[1] not in total:
+                total.update({t[1]: 0})
+            total[t[0]] = round(total[t[0]] + t[2], 2)
+            total[t[1]] = round(total[t[1]] - t[2], 2)
+
+        ordered = sorted(total.items(), key=lambda x: x[1])
+        print(ordered)
+        amplitude = max(ordered[-1][1], - ordered[0][1])
+        coeffs = []
+        for e in ordered:
+            percent = round(100*e[1]/amplitude)
+            if percent < 0:
+                percent *= -1
+            coeffs.append((e[0], e[1], percent))
+        return coeffs
+    else:
+        return []
     
 def participants(summary):
     actors = []
