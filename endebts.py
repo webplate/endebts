@@ -215,6 +215,56 @@ def remove_cascad(cascade, transacs):
     transacs.remove(transacD)
     transacs.remove(transacE)
 
+
+def detect_cross(transacs):
+    #detect person giving to two persons
+    double_givers = []
+    for i in xrange(len(transacs)):
+        for j in xrange(len(transacs)):
+            if i != j:
+                transac=transacs[i]
+                transac2=transacs[j]
+                if transac[0] == transac2[0] and transac[1] != transac2[1]:
+                    
+                    if ([transac, transac2] not in double_givers and
+                    [transac2, transac] not in double_givers):
+                        
+                        double_givers.append([transac, transac2])
+    
+    #detect cross between double givers
+    for i in xrange(len(double_givers)):
+        for j in xrange(len(double_givers)):
+            if i != j:
+                dgi = double_givers[i]
+                dgj = double_givers[j]
+                
+                coupleA = dgi[0][1], dgi[1][1]
+                coupleB = dgj[0][1], dgj[1][1]
+                
+                if coupleA == coupleB:
+                    return [ dgi[0], dgi[1], dgj[0], dgj[1] ]
+    return False
+
+def remove_cross(cross, transacs): 
+    # remove crossing transactions
+    for t in cross:
+        transacs.remove(t)
+    
+    cross = sorted(cross, key=lambda x:x[2])
+    minimal = cross[0]
+    cross.remove(minimal)
+    
+    for t in cross:
+        if minimal[0] != t[0] and minimal[1] != t[1]:
+            crossed = t
+    cross.remove(crossed)
+    
+    #replace them with minimal transaction distributed on others
+    transacs.append((crossed[0], crossed[1], crossed[2] - minimal[2]))
+    transacs.append((cross[0][0], cross[0][1], cross[0][2] + minimal[2]))
+    transacs.append((cross[1][0], cross[1][1], cross[1][2] + minimal[2]))
+
+
 def simplify(transacs):
     degroup(transacs)
     while True:
@@ -240,9 +290,13 @@ def simplify(transacs):
         if d_cycle != False:
             remove_cycle(d_cycle, transacs)
             continue
+        d_cross=detect_cross(transacs)
+        if d_cross != False:
+            remove_cross(d_cross, transacs)
+            continue
 #la simplification est terminée:
 #il ne reste plus de debts nulles, négatives, redondantes,
-#cycliques, en cascade
+#cycliques, en cascade ou croisées
         break
 
 ###tentative de création de l'objet "debts"
@@ -305,3 +359,7 @@ class debts:
         writer.writerows(new_histo)
         historique.close()
         self.update()
+
+
+if __name__ == '__main__':
+    d = debts('/home/g/Bureau/cross2.csv')
