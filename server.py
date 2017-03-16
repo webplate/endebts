@@ -11,6 +11,10 @@ from flask import Flask, render_template, request, redirect, url_for, flash, mak
 app = Flask(__name__)
 app.secret_key = 'Zak8a9b7wvUkuBAMBLVKaAtBAM73CjuXeFBKw72Ti7jhf'
 
+# the global variable for storing endebtmentgraphs requested by users
+# not reloading them everytime
+GLOBALDEBTS = {}
+
 def remove_dupli(l):
     out = []
     for i in l:
@@ -214,7 +218,5 @@ def download_log(logname):
     return response
 
 if __name__ == '__main__':
-    GLOBALDEBTS = {}
-
     app.debug = True
     app.run(host='0.0.0.0')
