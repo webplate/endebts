@@ -11,6 +11,13 @@ from flask import Flask, render_template, request, redirect, url_for, flash, mak
 app = Flask(__name__)
 app.secret_key = 'Zak8a9b7wvUkuBAMBLVKaAtBAM73CjuXeFBKw72Ti7jhf'
 
+def remove_dupli(l):
+    out = []
+    for i in l:
+        if i not in out:
+            out.append(i)
+    return out
+
 def valid_transaction(giver, receiver, description, amount):
     try:
         a = float(amount)
@@ -114,12 +121,13 @@ def generate_main_view(logname, full_precision):
         debt.update()
         if debt.success:
             if full_precision:
-                summary=debt.transacs_simple
-                actors=debt.actors + added_actors
+                summary = debt.transacs_simple
+                actors = remove_dupli(debt.actors + added_actors)
             else:
                 summary = round_summary(debt.transacs_simple)
-                actors = participants(summary) + added_actors
+                actors = remove_dupli(participants(summary) + added_actors)
             summary = sort_summary(summary)
+            actors = sorted(actors)
             equilibrium = get_equilibrium(summary)
             total_spent = debt.total
             history = format_histo(debt.history)

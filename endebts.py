@@ -267,10 +267,6 @@ class debts:
             t = time.time()
             simplify(self.transacs_simple)
     
-    def add_actor(name):
-        if name not in self.actors:
-            self.actors.append(name)
-
     def add(self, transac, description, dateandtime=None):
         #le temps par défaut est le temps local
         if dateandtime == None:
