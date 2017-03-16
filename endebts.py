@@ -103,7 +103,7 @@ def read_all(histo):
     history.close()
     return lines
 
-def liste_actors(transacs):
+def actors_list(transacs):
     actors=[]
     for transac in transacs:
         if transac[0] not in actors:
@@ -216,8 +216,12 @@ def remove_cascad(cascade, transacs):
     transacs.remove(transacE)
 
 def detect_cross(transacs):
-    for transac in transacs:
-        print(transac)
+    for i in xrange(len(transacs)):
+        for j in xrange(len(transacs)):
+            if i != j:
+                transac=transacs[i]
+                transac2=transacs[j]
+                print(transac, transac2)
     return False
 
 def remove_cross(cross, transacs):
@@ -262,17 +266,15 @@ class debts:
     def __init__(self, histo):
         self.historyname=histo
         self.update()
-        self.total = 0
 
     def update(self):
         try:
             transacs, self.history=generate_graph(self.historyname)
-            
             self.success=True
         except:
             self.success=False
         if self.success:
-            self.actors = liste_actors(transacs)
+            self.actors = actors_list(transacs)
             self.total = compute_total_spent(transacs)
             self.transacs_simple = transacs
             
