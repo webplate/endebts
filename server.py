@@ -115,8 +115,7 @@ def get_debt(logname):
         
     return GLOBALDEBTS[logname]
 
-@app.route('/<string:logname>')
-def main_page(logname):
+def generate_main(logname):
     if check_logname(logname):
         debt, added_actors = get_debt(logname)
         debt.update()
@@ -143,6 +142,14 @@ def main_page(logname):
             return "Error in history file: " + str(filename)
     else:
         return "Only alphanumeric characters are allowed."
+
+@app.route('/')
+def default_main_page():
+    return generate_main('default')
+
+@app.route('/<string:logname>')
+def main_page(logname):
+    return generate_main(logname)
 
 @app.route('/<string:logname>/add', methods=['POST', 'GET'])
 def add_transaction(logname):
