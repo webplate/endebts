@@ -123,7 +123,7 @@ def get_debt(logname):
 def generate_main(logname):
     if check_logname(logname):
         debt, added_actors = get_debt(logname)
-        #~ debt.update()
+        folder, filename = get_filename(logname)
         if debt.success:
             summary = round_summary(debt.transacs_simple)
             actors = remove_dupli(participants(summary) + added_actors)
