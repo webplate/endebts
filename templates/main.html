@@ -147,11 +147,6 @@
                     <strong>{{ item[1] }}</strong> owes <strong>{{ item[2] }} {{ money }}</strong> to <strong>{{ item[0] }}</strong>.<br />
             {% endfor %}
             </p>
-            {% if precise_version %}
-                <a class="btn btn-default btn-xs" href="/{{ logname }}">Show only significant transactions</a>        
-            {% else %}
-                <a class="btn btn-default btn-xs" href="./{{ logname }}/full_precision">Show unsignificant transactions</a>
-            {% endif %}
         </div>
                 
         <div class="col-sm-5 text-right">

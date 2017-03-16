@@ -115,17 +115,14 @@ def get_debt(logname):
         
     return GLOBALDEBTS[logname]
 
-def generate_main_view(logname, full_precision):
+@app.route('/<string:logname>')
+def main_page(logname):
     if check_logname(logname):
         debt, added_actors = get_debt(logname)
         debt.update()
         if debt.success:
-            if full_precision:
-                summary = debt.transacs_simple
-                actors = remove_dupli(debt.actors + added_actors)
-            else:
-                summary = round_summary(debt.transacs_simple)
-                actors = remove_dupli(participants(summary) + added_actors)
+            summary = round_summary(debt.transacs_simple)
+            actors = remove_dupli(participants(summary) + added_actors)
             summary = sort_summary(summary)
             actors = sorted(actors)
             equilibrium = get_equilibrium(summary)
@@ -141,21 +138,12 @@ def generate_main_view(logname, full_precision):
                 actors=actors,
                 equilibrium=equilibrium,
                 total=total_spent,
-                logname=logname,
-                precise_version=full_precision)
+                logname=logname)
         else:
             return "Error in history file: " + str(filename)
     else:
         return "Only alphanumeric characters are allowed."
 
-@app.route('/<string:logname>')
-def main_page(logname):
-    return generate_main_view(logname, full_precision=False)
-
-@app.route('/<string:logname>/full_precision')
-def precise_page(logname):
-    return generate_main_view(logname, full_precision=True)
-    
 @app.route('/<string:logname>/add', methods=['POST', 'GET'])
 def add_transaction(logname):
     if request.method == 'POST':
