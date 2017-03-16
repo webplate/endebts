@@ -105,20 +105,21 @@ def get_filename(logname):
 def get_debt(logname):
     """ Load debt object from global variable
     or create a new one and load it"""
-    if logname not in GLOBALDEBTS:
+    if logname in GLOBALDEBTS:
+        GLOBALDEBTS[logname][0].update()
+    else:
         folder, filename = get_filename(logname)
         # compute debt graph from file
         debt=endebts.debts(filename)
         # to add actors later
         added_actors = []
         GLOBALDEBTS.update({logname: [ debt, added_actors ]})
-        
     return GLOBALDEBTS[logname]
 
 def generate_main(logname):
     if check_logname(logname):
         debt, added_actors = get_debt(logname)
-        debt.update()
+        #~ debt.update()
         if debt.success:
             summary = round_summary(debt.transacs_simple)
             actors = remove_dupli(participants(summary) + added_actors)
