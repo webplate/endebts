@@ -215,18 +215,6 @@ def remove_cascad(cascade, transacs):
     transacs.remove(transacD)
     transacs.remove(transacE)
 
-def detect_cross(transacs):
-    for i in xrange(len(transacs)):
-        for j in xrange(len(transacs)):
-            if i != j:
-                transac=transacs[i]
-                transac2=transacs[j]
-                print(transac, transac2)
-    return False
-
-def remove_cross(cross, transacs):
-    pass
-
 def simplify(transacs):
     degroup(transacs)
     while True:
@@ -252,13 +240,9 @@ def simplify(transacs):
         if d_cycle != False:
             remove_cycle(d_cycle, transacs)
             continue
-        d_cross=detect_cross(transacs)
-        if d_cross != False:
-            remove_cross(d_cross, transacs)
-            continue
 #la simplification est terminée:
 #il ne reste plus de debts nulles, négatives, redondantes,
-#cycliques, en cascade ou croisée
+#cycliques, en cascade
         break
 
 ###tentative de création de l'objet "debts"
