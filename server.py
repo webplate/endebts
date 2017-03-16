@@ -151,7 +151,7 @@ def generate_main(logname):
 
 @app.route('/')
 def default_main_page():
-    return generate_main('default')
+    return redirect(url_for('main_page', logname='default'))
 
 @app.route('/<string:logname>')
 def main_page(logname):
