@@ -144,7 +144,7 @@ def generate_main(logname):
                 total=total_spent,
                 logname=logname)
         else:
-            return "Error in history file: " + str(filename)
+            return "Error in history file: " + str(filename) + " Should you set correct PATH in config.py ?"
     else:
         return "Only alphanumeric characters are allowed."
 
