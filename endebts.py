@@ -216,12 +216,20 @@ def remove_cascad(cascade, transacs):
     transacs.remove(transacE)
 
 def detect_cross(transacs):
+    double_givers = []
     for i in xrange(len(transacs)):
         for j in xrange(len(transacs)):
             if i != j:
                 transac=transacs[i]
                 transac2=transacs[j]
-                print(transac, transac2)
+                if transac[0] == transac2[0] and transac[1] != transac2[1]:
+                    double = [transac[0], set([(transac[1], transac[2]),
+                      (transac2[1],transac2[2])])]
+                    if double not in double_givers:
+                        double_givers.append(double)
+    for i in xrange(len(double_givers)):
+        
+        print(double_givers[i])
     return False
 
 def remove_cross(cross, transacs):
