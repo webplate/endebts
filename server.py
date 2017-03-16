@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
+import shutil
 
 import config as CONFIG
 import endebts
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 
 app = Flask(__name__)
 app.secret_key = 'Zak8a9b7wvUkuBAMBLVKaAtBAM73CjuXeFBKw72Ti7jhf'
@@ -24,7 +25,7 @@ def valid_transaction(giver, receiver, description, amount):
         return False
 
 def format_histo(histo):
-    # format history (in reverse and no printed tuples)
+    # format history (in reverse and no visible tuples)
     history=histo[::-1]
     formated_hist = []
     for line in history:
@@ -60,7 +61,6 @@ def get_equilibrium(summary):
             total[t[1]] = round(total[t[1]] - t[2], 2)
 
         ordered = sorted(total.items(), key=lambda x: x[1])
-        print(ordered)
         amplitude = max(ordered[-1][1], - ordered[0][1])
         coeffs = []
         for e in ordered:
@@ -84,82 +84,72 @@ def participants(summary):
 def check_logname(logname):
     return logname.isalnum()
 
+def get_filename(logname):
+    if CONFIG.PATH == 0:
+        #use default path
+        folder = os.path.split(os.path.abspath(__file__))[0]
+        filename = os.path.join(folder, 'static', 'data', logname + '.csv')
+    else:
+        #use config path
+        folder = os.path.split(CONFIG.PATH)[0]
+        filename = os.path.join(folder, logname + '.csv')
+    return folder, filename
+
 def get_debt(logname):
+    """ Load debt object from global variable
+    or create a new one and load it"""
     if logname not in GLOBALDEBTS:
-        if CONFIG.PATH == 0:
-            #use default path
-            app_folder = os.path.split(os.path.abspath(__file__))[0]
-            filename = os.path.join(app_folder, 'static', 'data', logname + '.csv')
-        else:
-            #use config path
-            folder = os.path.split(CONFIG.PATH)[0]
-            filename = os.path.join(folder, logname + '.csv')
+        folder, filename = get_filename(logname)
         # compute debt graph from file
         debt=endebts.debts(filename)
         # to add actors later
         added_actors = []
-        
         GLOBALDEBTS.update({logname: [ debt, added_actors ]})
         
     return GLOBALDEBTS[logname]
 
-@app.route('/<string:logname>')
-def main_page(logname):
+def generate_main_view(logname, full_precision):
     if check_logname(logname):
         debt, added_actors = get_debt(logname)
         debt.update()
         if debt.success:
-            summary = round_summary(debt.transacs_simple)
+            if full_precision:
+                summary=debt.transacs_simple
+                actors=debt.actors + added_actors
+            else:
+                summary = round_summary(debt.transacs_simple)
+                actors = participants(summary) + added_actors
             summary = sort_summary(summary)
             equilibrium = get_equilibrium(summary)
             total_spent = debt.total
-            actors = participants(summary) + added_actors
             history = format_histo(debt.history)
             #render page
             return render_template('main.html',
-                name=CONFIG.NAME,
+                name=logname,
+                money=CONFIG.MONEY,
+                dl_button=CONFIG.DL_BUTTON,
                 summary=summary,
                 history=history,
                 actors=actors,
-                money=CONFIG.MONEY,
-                dl_button=CONFIG.DL_BUTTON,
                 equilibrium=equilibrium,
                 total=total_spent,
                 logname=logname,
-                precise_version=False)
+                precise_version=full_precision)
         else:
             return "Error in history file: " + str(filename)
     else:
         return "Only alphanumeric characters are allowed."
 
+@app.route('/<string:logname>')
+def main_page(logname):
+    return generate_main_view(logname, full_precision=False)
+
 @app.route('/<string:logname>/full_precision')
 def precise_page(logname):
-    debt, added_actors = get_debt(logname)
-    debt.update()
-    if debt.success:
-        summary=debt.transacs_simple
-        summary = sort_summary(summary)
-        equilibrium = get_equilibrium(summary)
-        total_spent = debt.total
-        actors=debt.acteurs + added_actors
-        history=debt.history
-        #render page
-        return render_template('main.html',
-            name=CONFIG.NAME,
-            summary=summary,
-            history=format_histo(history),
-            actors=actors,
-            money=CONFIG.MONEY,
-            dl_button=CONFIG.DL_BUTTON,
-            equilibrium=equilibrium,
-            total=total_spent,
-            logname=logname,
-            precise_version=True)
-    else:
-        return "Error in history file: "+ str(filename)
+    return generate_main_view(logname, full_precision=True)
     
-@app.route('/add', methods=['POST', 'GET'])
-def add_transaction():
+@app.route('/<string:logname>/add', methods=['POST', 'GET'])
+def add_transaction(logname):
     if request.method == 'POST':
         #extract receivers from request
         receivers = [item for item in request.form if request.form[item] == u'on']
@@ -167,6 +157,7 @@ def add_transaction():
                        receivers,
                        request.form['description'],
                        request.form['amount']):
+            debt, added_actors = get_debt(logname)
             #write new transaction
             if debt.success:
                 new_trans=(request.form['giver'],
@@ -174,40 +165,49 @@ def add_transaction():
                             request.form['amount'])
                 debt.add(new_trans, request.form['description'])
                 #remove actors to add (they should have been written in log now)
-                global added_actors
                 added_actors = []
             #redirect to main view
-            return redirect(url_for('main_page'))
+            return redirect(url_for('main_page', logname=logname))
     # if the request method
     # was GET or invalid transaction
     flash("Invalid Transaction...", 'text-warning')
     #redirect to main view
-    return redirect(url_for('main_page'))
+    return redirect(url_for('main_page', logname=logname))
 
-@app.route('/rm_transaction', methods=['POST', 'GET'])
-def rm_transaction():
+@app.route('/<string:logname>/rm_transaction', methods=['POST', 'GET'])
+def rm_transaction(logname):
     if request.method == 'POST':
         # extract line numbers to remove
         lines = [int(item[7:]) for item in request.form if request.form[item] == u'on']
+        debt, added_actors = get_debt(logname)
         if debt.success:
             debt.comment(lines)
 
     #redirect to main view
-    return redirect(url_for('main_page'))
+    return redirect(url_for('main_page', logname=logname))
 
 
-@app.route('/add_user', methods=['POST', 'GET'])
-def add_user():
+@app.route('/<string:logname>/add_user', methods=['POST', 'GET'])
+def add_user(logname):
     if request.method == 'POST':
+        debt, added_actors = get_debt(logname)
         if (request.form['new_user'] != ''
-        and request.form['new_user'] not in debt.acteurs
+        and request.form['new_user'] not in debt.actors
         and request.form['new_user'] not in added_actors):
             added_actors.append(request.form['new_user'])
             #redirect to main view
-            return redirect(url_for('main_page'))
+            return redirect(url_for('main_page', logname=logname))
     flash("Invalid username...", 'text-warning')
     #redirect to main view
-    return redirect(url_for('main_page'))
+    return redirect(url_for('main_page', logname=logname))
+
+@app.route('/<string:logname>/download')
+def download_log(logname):
+    folder, filename = get_filename(logname)
+    response = make_response(open(filename).read())
+    response.content_type = "text/plain"
+    response.mimetype = "text/plain"
+    return response
 
 if __name__ == '__main__':
     GLOBALDEBTS = {}

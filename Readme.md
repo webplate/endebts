@@ -1,5 +1,6 @@
 # Simple mutual endebtment manager on your home server for peaceful housesharing.
 
+## Install
 Built with Flask
 
     sudo pip install Flask
@@ -29,9 +30,22 @@ Activate and restart:
     sudo a2ensite endebts.conf
     sudo service apache2 restart
 
-Reload it and visit http://localhost/endebts
+## Use it
+
+Visit :
+
+    http://localhost/endebts/anyalphanumericstring
 
 Add some users to get started.
 
 
 et hop !
+
+
+## General syntax of csv history file:
+
+* {tabulation} to separate fields
+* "#" starting line for commented line
+* "," to separate names (no spaces after it !)
+* "." for decimal notation (not ",")
+
