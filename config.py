@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#~ PATH = '/home/g/Bureau/' #set to 0 for default path
+
+# csv db files PATH
+# set to 0 for default path ({app_path}/static/data)
 PATH = '/home/g/Bureau/'
+#~ PATH = '/media/hdd/data/Divers/endebts_db/'
 #~ PATH = 0
 MONEY = u'€'
-DL_BUTTON = True # do we display csv DL button ? 

@@ -93,7 +93,7 @@ def participants(summary):
     return sorted(actors)
 
 def check_logname(logname):
-    return logname.isalnum()
+    return logname.isalnum() and len(logname) < 100
 
 def get_filename(logname):
     if CONFIG.PATH == 0:
@@ -136,7 +136,6 @@ def generate_main(logname):
             return render_template('main.html',
                 name=logname,
                 money=CONFIG.MONEY,
-                dl_button=CONFIG.DL_BUTTON,
                 summary=summary,
                 history=history,
                 actors=actors,
@@ -144,9 +143,11 @@ def generate_main(logname):
                 total=total_spent,
                 logname=logname)
         else:
-            return "Error in history file: " + str(filename) + " Should you set correct PATH in config.py ?"
+            return "<p>Error in history file: " + str(filename) + "</p> \
+            <p>Should you set correct PATH in config.py ?</p>"
     else:
-        return "Only alphanumeric characters are allowed."
+        return "<p>Max length: 100.</p> \
+            <p>Only alphanumeric characters are allowed.</p>"
 
 @app.route('/')
 def default_main_page():
