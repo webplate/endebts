@@ -319,7 +319,7 @@ class debts:
             t = time.time()
             simplify(self.transacs_simple)
     
-    def add(self, transac, description, dateandtime=None):
+    def add(self, transac, description, dateandtime=None, limit=None):
         #le temps par défaut est le temps local
         if dateandtime == None:
             dateandtime=time.localtime()
@@ -337,15 +337,28 @@ class debts:
         if transac[0] != destinataires and transac[2] != 0.0:
             transac=(time.strftime('%d/%m/%y %H:%M',dateandtime),
             transac[0], transac[2], destinataires, description)
+            
             try:
-                historique=open(self.historyname,'ab')
+                history_file=open(self.historyname,'rb')
             except IOError:
                 return False
             else:
-                writer=UnicodeWriter(historique, delimiter='	', quotechar='"')
-                writer.writerow(transac)
-                historique.close()
-                self.update()
+                row_count = sum(1 for row in history_file)
+            
+            try:
+                history_file=open(self.historyname,'ab')
+            except IOError:
+                return False
+            else:
+                if limit == None or row_count < limit:
+                    writer=UnicodeWriter(history_file, delimiter='	', quotechar='"')
+                    writer.writerow(transac)
+                    history_file.close()
+                    self.update()
+                    return True
+                else:
+                    history_file.close()
+                    return False
     
     def comment(self, line_nbs):
         full_histo = read_all(self.historyname)

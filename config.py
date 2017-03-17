@@ -7,3 +7,7 @@
 #~ PATH = '/media/hdd/data/Divers/endebts_db/'
 PATH = 0
 MONEY = u'€'
+MAXHISTORYLEN = 10000
+MAXLOGNAMELEN = 100
+MAXDESCLEN = 1000
+MAXUSERLEN = 30

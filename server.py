@@ -30,6 +30,7 @@ def valid_transaction(giver, receiver, description, amount):
     if ( giver != ''
         and receiver != []
         and description != ''
+        and len(description) < CONFIG.MAXDESCLEN
         and a != 0):
             return True
     else:
@@ -93,7 +94,7 @@ def participants(summary):
     return sorted(actors)
 
 def check_logname(logname):
-    return logname.isalnum() and len(logname) < 100
+    return logname.isalnum() and len(logname) < CONFIG.MAXLOGNAMELEN
 
 def get_filename(logname):
     if CONFIG.PATH == 0:
@@ -105,6 +106,11 @@ def get_filename(logname):
         folder = os.path.split(CONFIG.PATH)[0]
         filename = os.path.join(folder, logname + '.csv')
     return folder, filename
+
+def error_in_file(filename):
+    return "<p>Error in history file: " + str(filename) + "</p> \
+            <p>Maybe the PATH in config.py is incorrectly set</p> \
+            <p>Maybe you have reached the maximum linecount of the database file. Just use another URL suffix :)</p>"
 
 def get_debt(logname):
     """ Load debt object from global variable
@@ -143,8 +149,7 @@ def generate_main(logname):
                 total=total_spent,
                 logname=logname)
         else:
-            return "<p>Error in history file: " + str(filename) + "</p> \
-            <p>Should you set correct PATH in config.py ?</p>"
+            return error_in_file(filename)
     else:
         return "<p>Max length: 100.</p> \
             <p>Only alphanumeric characters are allowed.</p>"
@@ -172,9 +177,12 @@ def add_transaction(logname):
                 new_trans=(request.form['giver'],
                             tuple(receivers),
                             request.form['amount'])
-                debt.add(new_trans, request.form['description'])
+                added = debt.add(new_trans, request.form['description'], limit=CONFIG.MAXHISTORYLEN)
                 #remove actors to add (they should have been written in log now)
                 added_actors = []
+                if not added:
+                    folder, filename = get_filename(logname)
+                    return error_in_file(filename)
             #redirect to main view
             return redirect(url_for('main_page', logname=logname))
     # if the request method
@@ -202,7 +210,8 @@ def add_user(logname):
         debt, added_actors = get_debt(logname)
         if (request.form['new_user'] != ''
         and request.form['new_user'] not in debt.actors
-        and request.form['new_user'] not in added_actors):
+        and request.form['new_user'] not in added_actors
+        and len(request.form['new_user']) < CONFIG.MAXUSERLEN ):
             added_actors.append(request.form['new_user'])
             #redirect to main view
             return redirect(url_for('main_page', logname=logname))
