@@ -1,12 +1,9 @@
 # Simple mutual endebtment manager on your home server for peaceful housesharing.
 
-    https://github.com/webplate/endebts
 
-Buit with simplicity on mind. No database, only editable csv files.
+Built with simplicity on mind. No database, only editable csv files.
 
-## Demo
-
-    https://lambda.casa/endebts/
+## [Demo](https://lambda.casa/endebts/)
 
 ## Install
 Built with Flask
@@ -62,3 +59,4 @@ et hop !
 * "," to separate names (no spaces after it !)
 * "." for decimal notation (not ",")
 
+[Source](https://github.com/webplate/endebts)
