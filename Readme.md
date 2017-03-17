@@ -8,7 +8,8 @@ Built with simplicity on mind. No database, only editable csv files.
 ## Install
 Built with Flask
 
-    sudo pip install Flask
+    pip install Flask
+    pip install flask_babel
 
 Copy files to /var/www/endebts/
 
@@ -48,11 +49,12 @@ Visit :
 
 Add some users to get started.
 
+You cannot edit a transaction, just add the correct one and remove the unnecessary one(s) with the swipe icon at the bottom.
 
 et hop !
 
 
-## General syntax of csv history file:
+## General syntax of csv history files:
 
 * {tabulation} to separate fields
 * "#" starting line for commented line
