@@ -4,7 +4,6 @@
 
 # csv db files PATH
 # set to 0 for default path ({app_path}/static/data)
-PATH = '/home/g/Bureau/'
 #~ PATH = '/media/hdd/data/Divers/endebts_db/'
-#~ PATH = 0
+PATH = 0
 MONEY = u'€'
