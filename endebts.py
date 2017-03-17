@@ -337,11 +337,15 @@ class debts:
         if transac[0] != destinataires and transac[2] != 0.0:
             transac=(time.strftime('%d/%m/%y %H:%M',dateandtime),
             transac[0], transac[2], destinataires, description)
-            historique=open(self.historyname,'ab')
-            writer=UnicodeWriter(historique, delimiter='	', quotechar='"')
-            writer.writerow(transac)
-            historique.close()
-            self.update()
+            try:
+                historique=open(self.historyname,'ab')
+            except IOError:
+                return False
+            else:
+                writer=UnicodeWriter(historique, delimiter='	', quotechar='"')
+                writer.writerow(transac)
+                historique.close()
+                self.update()
     
     def comment(self, line_nbs):
         full_histo = read_all(self.historyname)
