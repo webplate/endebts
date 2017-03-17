@@ -1,5 +1,13 @@
 # Simple mutual endebtment manager on your home server for peaceful housesharing.
 
+    https://github.com/webplate/endebts
+
+Buit with simplicity on mind. No database, only editable csv files.
+
+## Demo
+
+    https://lambda.casa/endebts/
+
 ## Install
 Built with Flask
 
@@ -25,7 +33,12 @@ Create apache configuration file in /etc/apache2/sites-available/endebts.conf :
         Allow from all
     </Directory>
 
-Activate and restart:
+## Configure
+
+Set the PATH to store csv files in _config.py_
+It must be writable for _www-data_ user.
+
+## Activate and restart:
 
     sudo a2ensite endebts.conf
     sudo service apache2 restart
