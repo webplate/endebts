@@ -1,0 +1,101 @@
+# French translations for PROJECT.
+# Copyright (C) 2017 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-03-18 12:37+0100\n"
+"PO-Revision-Date: 2017-03-18 13:00+0100\n"
+"Last-Translator: Glen Lomax <glenlomax@gmail.com>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: templates/main.html:49
+msgid "Add transaction"
+msgstr "Ajouter une dépense"
+
+#: templates/main.html:55 templates/main.html:187 templates/main.html:205
+msgid "Giver"
+msgstr "Payeur"
+
+#: templates/main.html:68 templates/main.html:188 templates/main.html:206
+msgid "Amount"
+msgstr "Montant"
+
+#: templates/main.html:75 templates/main.html:189 templates/main.html:207
+msgid "Receivers"
+msgstr "Bénéficiaires"
+
+#: templates/main.html:86 templates/main.html:87 templates/main.html:190
+#: templates/main.html:208
+msgid "Description"
+msgstr "Description"
+
+#: templates/main.html:89
+msgid "Send transaction"
+msgstr "Confirmer"
+
+#: templates/main.html:103
+msgid "Balance"
+msgstr "Équilibre"
+
+#: templates/main.html:125
+msgid "Add person"
+msgstr "Ajouter quelqu'un"
+
+#: templates/main.html:128 templates/main.html:129
+msgid "New user"
+msgstr "Nom"
+
+#: templates/main.html:132
+msgid "Send name"
+msgstr "Envoyer"
+
+#: templates/main.html:144
+msgid "Summary"
+msgstr "Synthèse"
+
+#: templates/main.html:148
+#, python-format
+msgid ""
+"<strong>%(one)s</strong> owes <strong>%(amount)s %(currency)s</strong> to "
+"<strong>%(another)s</strong>."
+msgstr ""
+"<strong>%(one)s</strong> doit <strong>%(amount)s %(currency)s</strong> à "
+"<strong>%(another)s</strong>."
+
+#: templates/main.html:157
+msgid "Total amount spent"
+msgstr "Total dépensé"
+
+#: templates/main.html:179
+msgid "Log"
+msgstr "Historique"
+
+#: templates/main.html:179
+msgid "Download"
+msgstr "Télécharger"
+
+#: templates/main.html:186 templates/main.html:204
+msgid "Date & Time"
+msgstr "Date"
+
+#: templates/main.html:210
+msgid "Remove selected"
+msgstr "Supprimer la sélection"
+
+#: templates/main.html:222
+msgid "Source code:"
+msgstr "Code source :"
+
+#~ msgid "%(one)s owes %(amount)s to %(another)s."
+#~ msgstr "%(one)s doit %(amount)s à %(another)s."

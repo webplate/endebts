@@ -14,15 +14,11 @@ app = Flask(__name__)
 app.secret_key = 'Zak8a9b7wvUkuBAMBLVKaAtBAM73CjuXeFBKw72Ti7jhf'
 babel = Babel(app)
 
-LANGUAGES = {
-    'en': 'English',
-    'fr': 'French',
-    'it': 'Italian'
-}
 # send translation according to browser header
 @babel.localeselector
 def get_locale():
-    return request.accept_languages.best_match(LANGUAGES.keys())
+    print(request.accept_languages.best_match(CONFIG.LANGUAGES.keys()))
+    return request.accept_languages.best_match(CONFIG.LANGUAGES.keys())
 
 # the global variable for storing endebtmentgraphs requested by users
 # not reloading them everytime

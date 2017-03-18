@@ -46,13 +46,13 @@
     
     <div class="row">
         <div class="col-xs-12">
-        <h2>Add transaction</h2>
+        <h2>{{ _('Add transaction') }}</h2>
         
         <form method="post" action="{{ logname }}/add">
         <div class="row rowform">
                 <div class="col-xs-4">
                         <div class="row">
-                        <label for="giver">Giver :</label>
+                        <label for="giver">{{ _('Giver') }}</label>
                         <select class="form-control actor" name="giver" id="giver" autofocus>
                         {% for item in actors %}
                             <option class="actor" value="{{ item }}">{{ item }}</option>
@@ -62,17 +62,17 @@
                         <br />
                         
                         <div class="form-group">
-                            <label class="sr-only" for="amount">Amount in {{ money }}:</label>
+                            <label class="sr-only" for="amount">{{ money }}</label>
                             <div class="input-group">
                                 <div class="input-group-addon">{{ money }}</div>
-                                <input class="form-control" type="text" name="amount" id="amount" placeholder="Amount" maxlength="20" required/>
+                                <input class="form-control" type="text" name="amount" id="amount" placeholder="{{ _('Amount') }}" maxlength="20" required/>
                             </div>
                         </div>
                         </div>
                 </div>
                 <div class="col-xs-8">
                 
-                    <label>Receivers :</label><br />
+                    <label>{{ _('Receivers') }}</label><br />
                     {% for item in actors %}
                         <label class="btn btn-default receivers" for="{{ item }}">
                             <input type="checkbox" name="{{ item }}" id="{{ item }}"  checked="true"/> <span class="actor">{{ item }}</span>
@@ -83,10 +83,10 @@
             </div>
         <div class="row rowform">
             <p>
-            <label class="sr-only" for="description">Description :</label><br />
-            <input class="form-control" type="text" name="description" id="description" placeholder="Description" maxlength="1000" required/>
+            <label class="sr-only" for="description">{{ _('Description') }}</label><br />
+            <input class="form-control" type="text" name="description" id="description" placeholder="{{ _('Description') }}" maxlength="1000" required/>
             </p>
-            <input class="btn btn-primary" type="submit" value="Send transaction" />
+            <input class="btn btn-primary" type="submit" value="{{ _('Send transaction') }}" />
         </div>
         </form>
         
@@ -100,7 +100,7 @@
     <div class="row">
         
         <div class="col-sm-8">
-            <h2>Balance</h2>
+            <h2>{{ _('Balance') }}</h2>
             
             <table class="table">
                 {% for item in equilibrium %}
@@ -122,14 +122,14 @@
         </div>
     
         <div class="col-sm-4 text-right">
-            <h2><small>Add person</small></h2>
+            <h2><small>{{ _('Add person') }}</small></h2>
             <form method="post" action="{{ logname }}/add_user">
                 <p>
-                    <label class="sr-only" for="new_user">New user :</label>
-                    <input class="form-control" type="text" name="new_user" id="new_user" placeholder="New user" maxlength="20" required/>
+                    <label class="sr-only" for="new_user">{{ _('New user') }}</label>
+                    <input class="form-control" type="text" name="new_user" id="new_user" placeholder="{{ _('New user') }}" maxlength="20" required/>
                 </p>
 
-            <input class="btn btn-primary" type="submit" value="Send name" />
+            <input class="btn btn-primary" type="submit" value="{{ _('Send name') }}" />
             
             </form>
         </div>
@@ -141,16 +141,20 @@
         
     <div class="row">
         <div class="col-sm-7">
-            <h2>Summary</h2>
+            <h2>{{ _('Summary') }}</h2>
             <p class="summary">
             {% for item in summary %}
-                    <strong>{{ item[1] }}</strong> owes <strong>{{ item[2] }} {{ money }}</strong> to <strong>{{ item[0] }}</strong>.<br />
+                    {% autoescape false %}
+                    {{ _('<strong>%(one)s</strong> owes <strong>%(amount)s %(currency)s</strong> to <strong>%(another)s</strong>.',
+                        one=item[1], amount=item[2], currency=money, another=item[0]) }}
+                    {% endautoescape %}
+                        <br />
             {% endfor %}
             </p>
         </div>
                 
         <div class="col-sm-5 text-right">
-            <h2><small>Total amount spent</small></h2>
+            <h2><small>{{ _('Total amount spent') }}</small></h2>
             <p><strong>{{ total }} {{ money }}</strong></p>
         </div>
     
@@ -172,18 +176,18 @@
 <!--
     PROBLEM WITH STATIC URL AND NON LOCAL DB FILE !!
 -->
-    <h2>Log <a class="btn btn-default btn-sm" href="{{ logname }}/download">Download</a></h2>
+    <h2>{{ _('Log') }} <a class="btn btn-default btn-sm" href="{{ logname }}/download">{{ _('Download') }}</a></h2>
 
     
     <form method="post" action="{{ logname }}/rm_transaction" onsubmit="return confirm('Do you really want to remove the selected transactions ?');">
     <div class="table-responsive">
     <table class="table table-condensed table-striped" id="history">
         <tr>
-            <th>Date & Time</th>
-            <th>Giver</th>
-            <th>Amount</th>
-            <th>Receivers</th>
-            <th>Description</th>
+            <th>{{ _('Date & Time') }}</th>
+            <th>{{ _('Giver') }}</th>
+            <th>{{ _('Amount') }}</th>
+            <th>{{ _('Receivers') }}</th>
+            <th>{{ _('Description') }}</th>
             <th class="last_col"><input type="checkbox" onClick="toggle(this, 'rm_line')" /></th>
         </tr>
     {% for item in history %}
@@ -197,13 +201,13 @@
         </tr>
     {% endfor %}
         <tr>
-            <th>Date & Time</th>
-            <th>Giver</th>
-            <th>Amount</th>
-            <th>Receivers</th>
-            <th>Description</th>
+            <th>{{ _('Date & Time') }}</th>
+            <th>{{ _('Giver') }}</th>
+            <th>{{ _('Amount') }}</th>
+            <th>{{ _('Receivers') }}</th>
+            <th>{{ _('Description') }}</th>
             <th class="last_col">
-                <button type="submit" class="btn btn-default"><img src="{{ url_for('static', filename='img/edit-clear.png') }}" alt="Remove selected"/></button>
+                <button type="submit" class="btn btn-default"><img src="{{ url_for('static', filename='img/edit-clear.png') }}" alt="{{ _('Remove selected') }}"/></button>
             </th>
         </tr>
     </table>
@@ -215,7 +219,7 @@
     Source code
 -->
     <p>
-        Source code: <a href="https://github.com/webplate/endebts">https://github.com/webplate/endebts</a>
+        {{ _('Source code:') }} <a href="https://github.com/webplate/endebts">https://github.com/webplate/endebts</a>
     </p>
 <!--
     Close down container
