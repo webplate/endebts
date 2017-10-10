@@ -8,89 +8,91 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2017-03-18 12:37+0100\n"
-"PO-Revision-Date: 2017-03-18 13:06+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2017-03-18 20:05+0100\n"
 "Language: it\n"
 "Language-Team: it <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+"Last-Translator: \n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: templates/main.html:49
 msgid "Add transaction"
-msgstr ""
+msgstr "Aggiungi una spesa"
 
 #: templates/main.html:55 templates/main.html:187 templates/main.html:205
 msgid "Giver"
-msgstr ""
+msgstr "Chi ha pagato"
 
 #: templates/main.html:68 templates/main.html:188 templates/main.html:206
 msgid "Amount"
-msgstr ""
+msgstr "Quanto"
 
 #: templates/main.html:75 templates/main.html:189 templates/main.html:207
 msgid "Receivers"
-msgstr ""
+msgstr "Per chi"
 
 #: templates/main.html:86 templates/main.html:87 templates/main.html:190
 #: templates/main.html:208
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 #: templates/main.html:89
 msgid "Send transaction"
-msgstr ""
+msgstr "Registra questa spesa"
 
 #: templates/main.html:103
 msgid "Balance"
-msgstr ""
+msgstr "Equilibro"
 
 #: templates/main.html:125
 msgid "Add person"
-msgstr ""
+msgstr "Aggiungi qualcuno"
 
 #: templates/main.html:128 templates/main.html:129
 msgid "New user"
-msgstr ""
+msgstr "Nuovo utente"
 
 #: templates/main.html:132
 msgid "Send name"
-msgstr ""
+msgstr "Registra questo nome"
 
 #: templates/main.html:144
 msgid "Summary"
-msgstr ""
+msgstr "Riassunto"
 
 #: templates/main.html:148
 #, python-format
 msgid ""
-"<strong>%(one)s</strong> owes <strong>%(amount)s %(currency)s</strong> to"
-" <strong>%(another)s</strong>."
+"<strong>%(one)s</strong> owes <strong>%(amount)s %(currency)s</strong> "
+"to <strong>%(another)s</strong>."
 msgstr ""
+"<strong>%(one)s</strong> deve <strong>%(amount)s %(currency)s</strong> a "
+"<strong>%(another)s</strong>."
 
 #: templates/main.html:157
 msgid "Total amount spent"
-msgstr ""
+msgstr "Malloppo speso finora"
 
 #: templates/main.html:179
 msgid "Log"
-msgstr ""
+msgstr "Lista delle spese"
 
 #: templates/main.html:179
 msgid "Download"
-msgstr ""
+msgstr "Scarica"
 
 #: templates/main.html:186 templates/main.html:204
 msgid "Date & Time"
-msgstr ""
+msgstr "Data & ora"
 
 #: templates/main.html:210
 msgid "Remove selected"
-msgstr ""
+msgstr "Rimuovi spese selezionate"
 
 #: templates/main.html:222
 msgid "Source code:"
-msgstr ""
-
+msgstr "Codice fonte:"

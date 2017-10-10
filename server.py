@@ -231,9 +231,14 @@ def add_user(logname):
 @app.route('/<string:logname>/download')
 def download_log(logname):
     folder, filename = get_filename(logname)
-    response = make_response(open(filename).read())
-    response.content_type = "text/plain"
-    response.mimetype = "text/plain"
+    try:
+        log = open(filename)
+    except IOError:
+        response = redirect(url_for('main_page', logname='default'))
+    else:
+        response = make_response(log.read())
+        response.content_type = "text/plain"
+        response.mimetype = "text/plain"
     return response
 
 if __name__ == '__main__':
