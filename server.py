@@ -109,7 +109,7 @@ def get_filename(logname):
     if CONFIG.PATH == 0:
         #use default path
         folder = os.path.split(os.path.abspath(__file__))[0]
-        filename = os.path.join(folder, 'static', 'data', logname + '.csv')
+        filename = os.path.join(folder, 'data', logname + '.csv')
     else:
         #use config path
         folder = os.path.split(CONFIG.PATH)[0]
